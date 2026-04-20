@@ -88,4 +88,70 @@ with res_col2:
     st.metric("ใช้ถ่าน/ชม.", f"{cons_2:,.0f} kg")
     st.metric("ต้นทุน/วัน", f"{cost_day_2:,.0f} บาท")
 
-# (ส่วนของกราฟ Plotly และการสรุปส่วนต่างคงเดิม)
+# ==========================================
+# 📊 ส่วนที่ 4: กราฟสรุปเปรียบเทียบ (Plotly)
+# ==========================================
+st.markdown("### 📊 กราฟเปรียบเทียบการใช้งานและต้นทุน")
+
+# สร้าง DataFrame สำหรับนำไปทำกราฟ
+df_summary = pd.DataFrame({
+    "ประเภทถ่านหิน": [f"ถ่านหิน A ({name_1})", f"ถ่านหิน B ({name_2})"],
+    "ปริมาณการใช้ (kg/hr)": [cons_1, cons_2],
+    "ต้นทุนรายวัน (บาท/วัน)": [cost_day_1, cost_day_2]
+})
+
+graph_col1, graph_col2 = st.columns(2)
+
+with graph_col1:
+    # กราฟเปรียบเทียบปริมาณการใช้ถ่านหิน
+    fig_cons = px.bar(
+        df_summary, 
+        x="ประเภทถ่านหิน", 
+        y="ปริมาณการใช้ (kg/hr)",
+        text="ปริมาณการใช้ (kg/hr)",
+        color="ประเภทถ่านหิน",
+        title="ปริมาณการใช้ถ่านหิน (kg/hr) 📉ยิ่งน้อยยิ่งดี",
+        color_discrete_sequence=["#00b4d8", "#90e0ef"]
+    )
+    fig_cons.update_traces(texttemplate='%{text:,.0f}', textposition='auto')
+    st.plotly_chart(fig_cons, use_container_width=True)
+
+with graph_col2:
+    # กราฟเปรียบเทียบต้นทุนรายวัน
+    fig_cost = px.bar(
+        df_summary, 
+        x="ประเภทถ่านหิน", 
+        y="ต้นทุนรายวัน (บาท/วัน)",
+        text="ต้นทุนรายวัน (บาท/วัน)",
+        color="ประเภทถ่านหิน",
+        title="ต้นทุนรายวัน (บาท/วัน) 📉ยิ่งน้อยยิ่งดี",
+        color_discrete_sequence=["#ff6b6b", "#ff9f1c"]
+    )
+    fig_cost.update_traces(texttemplate='%{text:,.0f}', textposition='auto')
+    st.plotly_chart(fig_cost, use_container_width=True)
+
+# ==========================================
+# 🏆 ส่วนที่ 5: สรุปส่วนต่างความคุ้มค่า
+# ==========================================
+st.markdown("### 🏆 สรุปผลความคุ้มค่า")
+
+diff_cost_day = abs(cost_day_1 - cost_day_2)
+diff_cost_month = diff_cost_day * 30  # ประเมินการทำงาน 30 วัน
+
+if cost_day_1 == cost_day_2:
+    st.info("⚖️ **ถ่านหินทั้งสองชนิดมีต้นทุนรายวันเท่ากัน**")
+else:
+    if cost_day_1 < cost_day_2:
+        cheaper_name = f"ถ่านหิน A ({name_1})"
+        expensive_name = f"ถ่านหิน B ({name_2})"
+    else:
+        cheaper_name = f"ถ่านหิน B ({name_2})"
+        expensive_name = f"ถ่านหิน A ({name_1})"
+        
+    st.success(f"✅ **{cheaper_name}** มีความคุ้มค่ากว่า **{expensive_name}**")
+    
+    # แสดงตัวเลขประหยัดเงินแบบ Metric
+    m1, m2, m3 = st.columns(3)
+    m1.metric("ประหยัดต้นทุนได้ (บาท/วัน)", f"{diff_cost_day:,.0f}")
+    m2.metric("ประหยัดต้นทุนได้ (บาท/เดือน)", f"{diff_cost_month:,.0f}")
+    m3.metric("ประหยัดต้นทุนได้ (บาท/ปี)", f"{diff_cost_month * 12:,.0f}")
