@@ -29,7 +29,7 @@ with c2:
 with c3:
     h_fg = st.number_input("ค่าความร้อนแฝง (h_fg) [kJ/kg]", min_value=1000.0, value=2257.0, step=10.0)
 with c4:
-    h_fw = st.number_input("เอนทาลปีน้ำป้อน (h_fw) [kJ/kg]", min_value=10.0, value=105.0, step=5.0)
+    h_fw = st.number_input("เอนทาลปีน้ำป้อน (h_fw) [kJ/kg]", min_value=10.0, value=614.0, step=5.0)
 
 energy_req_kj = h_fg + h_fw
 st.info(f"💡 พลังงานที่ต้องการต่อ kg steam: **{energy_req_kj:,.0f} kJ/kg**")
